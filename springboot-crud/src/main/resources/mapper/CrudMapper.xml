@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwj.crud.mapper.CrudMapper">
+    <resultMap id="BaseResultMap" type="com.lwj.crud.entity.Crud">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <result column="hobby" jdbcType="VARCHAR" property="hobby"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+    </resultMap>
+    <sql id="selectWhere">
+        <where>
+            <if test="crud.id != null">
+                AND id = #{crud.id,jdbcType=INTEGER}
+            </if>
+            <if test="crud.name != null and crud.name != ''">
+                AND name LIKE concat(concat('%',#{crud.name,jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="crud.age != null">
+                AND age = #{crud.age,jdbcType=INTEGER}
+            </if>
+            <if test="crud.hobby != null and crud.hobby != ''">
+                AND hobby LIKE concat(concat('%',#{crud.hobby,jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="crud.sex != null">
+                AND sex = #{crud.sex,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, name, age, hobby, sex
+  </sql>
+    <select id="selectByExample" parameterType="com.lwj.crud.entity.CrudExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from crud
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="limit != null">
+            <if test="offset != null">
+                limit ${offset}, ${limit}
+            </if>
+            <if test="offset == null">
+                limit ${limit}
+            </if>
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from crud
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from crud
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.lwj.crud.entity.CrudExample">
+        delete from crud
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.lwj.crud.entity.Crud">
+    insert into crud (id, name, age, 
+      hobby, sex)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
+      #{hobby,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER})
+  </insert>
+    <insert id="insertSelective" parameterType="com.lwj.crud.entity.Crud">
+        insert into crud
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="age != null">
+                age,
+            </if>
+            <if test="hobby != null">
+                hobby,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null">
+                #{age,jdbcType=INTEGER},
+            </if>
+            <if test="hobby != null">
+                #{hobby,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.lwj.crud.entity.CrudExample" resultType="java.lang.Long">
+        select count(*) from crud
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update crud
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.name != null">
+                name = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.age != null">
+                age = #{record.age,jdbcType=INTEGER},
+            </if>
+            <if test="record.hobby != null">
+                hobby = #{record.hobby,jdbcType=VARCHAR},
+            </if>
+            <if test="record.sex != null">
+                sex = #{record.sex,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update crud
+        set id = #{record.id,jdbcType=INTEGER},
+        name = #{record.name,jdbcType=VARCHAR},
+        age = #{record.age,jdbcType=INTEGER},
+        hobby = #{record.hobby,jdbcType=VARCHAR},
+        sex = #{record.sex,jdbcType=INTEGER}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.lwj.crud.entity.Crud">
+        update crud
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null">
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="hobby != null">
+                hobby = #{hobby,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.lwj.crud.entity.Crud">
+    update crud
+    set name = #{name,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      hobby = #{hobby,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <!-- select Redis -->
+    <select id="selectRedis" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM crud
+        ORDER BY
+        ${page.order} ${page.sort}
+        limit #{page.offset},#{page.limit}
+    </select>
+    <!-- 查询总条数 -->
+    <select id="selectWhereCount" resultType="Long">
+        SELECT
+        COUNT(*)
+        FROM crud
+        <include refid="selectWhere"/>
+    </select>
+    <!-- 条件查询分页  -->
+    <select id="selectWhere" resultType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM crud
+        <include refid="selectWhere"/>
+        ORDER BY
+        ${page.order} ${page.sort}
+        LIMIT #{page.offset},#{page.limit}
+    </select>
+    <!-- 批量新增 -->
+    <insert id="insertList">
+        INSERT INTO crud
+        (name,age,hobby,sex)
+        VALUES
+        <foreach collection="list" index="index" item="list" separator=",">
+            (
+            <if test="list.name != null">
+                #{list.name,jdbcType=VARCHAR},
+            </if>
+            <if test="list.age != null">
+                #{list.age,jdbcType=INTEGER},
+            </if>
+            <if test="list.hobby != null">
+                #{list.hobby,jdbcType=VARCHAR},
+            </if>
+            <if test="list.sex != null">
+                #{list.sex,jdbcType=INTEGER}
+            </if>)
+        </foreach>
+    </insert>
+    <!-- 批量删除 -->
+    <delete id="deleteList">
+        DELETE FROM crud WHERE id IN
+        <foreach collection="list" item="list" open="(" separator="," close=")" index="index">
+            #{list}
+        </foreach>
+    </delete>
+    <!-- 批量修改 -->
+    <update id="updateList">
+        <foreach collection="list" item="list" separator=";" index="index">
+            UPDATE crud
+            <set>
+                <if test="list.name!=null and list.name!=''">
+                    name=#{list.name},
+                </if>
+                <if test="list.age!=null">
+                    age=#{list.age},
+                </if>
+                <if test="list.hobby!=null and list.hobby!=''">
+                    hobby=#{list.hobby},
+                </if>
+                <if test="list.sex!=null">
+                    sex=#{list.sex},
+                </if>
+            </set>
+            WHERE
+            id = #{list.id}
+        </foreach>
+    </update>
+</mapper>
